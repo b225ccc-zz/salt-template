@@ -1,0 +1,33 @@
+
+# if config file is ini format, it would be easier to build it
+# dynamically with ini_manage (https://docs.saltstack.com/en/latest/ref/states/all/salt.states.ini_manage.html)
+
+# for simple key-value pairs:
+{% for k, v in foo.settings.iteritems() %}
+{{ k }} = {{ v }}
+{% endfor %}
+
+# do something like this for building yaml
+
+# "is sequence" will check for list
+# "is string" will check for string
+# "is mapping" will check for dict
+
+output:
+{% for ok, ov in foo.settings.iteritems() %}
+  {{ ok }}:
+  {% for k, v in ov.iteritems() %}
+  {% if v is string %}
+    {{ k }}: "{{ v }}"
+  {% elif v is sequence %}
+    {{ k }}:
+    {% for l in v %}
+      - "{{ l }}"
+    {% endfor %}
+  {% elif v %}
+    {{ k }}: true
+  {% else %}
+    {{ k }}: false
+  {% endif %}
+  {% endfor %}
+{% endfor %}

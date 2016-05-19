@@ -1,0 +1,26 @@
+{% set foo = salt['grains.filter_by']({
+    'defaults': {
+    }
+  },
+  default='defaults',
+  merge=salt['grains.filter_by']({
+    'RedHat': {
+    },
+    'Debian': {
+      'packages': {
+        'foo': {},
+      },
+      'service_name': 'foo',
+      'config_file': '/etc/foo.conf',
+    },
+    },
+    merge=salt['grains.filter_by']({
+      'trusty': {
+      }
+      },
+      grain='os_codename',
+      merge=salt['pillar.get']('foo')
+    )
+  )
+)
+%}
